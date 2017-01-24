@@ -81,5 +81,10 @@ public class RPServiceImpl implements RPService{
     public String saveTransaction(String request) {
         return GSON.toJson(RP_ENGINE.saveTransaction(request));
     }
+
+    @Override
+    public String getPendingTransactions(String request) {
+        return GSON.toJson(RP_ENGINE.getPendingTransactions(request));
+    }
     
 }

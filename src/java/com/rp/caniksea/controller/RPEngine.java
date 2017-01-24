@@ -351,4 +351,15 @@ public class RPEngine {
         return PostGenericResponse.builder().response_code(response_code).response_description(response_description).data(sale).build();
     }
 
+    public GenericCollectionResponse getPendingTransactions(String request) {
+        String response_code = "00", response_description = "Success";
+        Set<Object> sales = DAO.getPendingTransactions(request);
+        if(sales == null){
+            response_code = "99";
+            response_description = "An error occurred!";
+        }
+        return GenericCollectionResponse.builder().response_code(response_code).response_description(response_description)
+                .response_data(sales).build();
+    }
+
 }
