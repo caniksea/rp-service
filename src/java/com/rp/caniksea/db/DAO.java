@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
@@ -516,8 +517,7 @@ public class DAO {
                 rs = ps.getGeneratedKeys();
                 if(rs.next()){
                     int saleId = rs.getInt(1);
-                    s = Sale.builder().copy(sale).sale_id(saleId).order_date(new Date()).build();
-                    
+                    s = Sale.builder().copy(sale).sale_id(saleId).order_date(new Date()).build();                    
                 }else{
                     LOG.info("Sale not created");
                 }
@@ -528,6 +528,47 @@ public class DAO {
             }
         }
         return s;
+    }
+
+    public Set<Object> getPendingTransactions(String request) {
+        Set<Object> sales = null;
+        Connection con = DBConnection.getMySQLConnection();
+        if(con != null){
+            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? AND orderstatus = ? ORDER BY orderdate DESC LIMIT 9";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = con.prepareStatement(selectSQL);
+                ps.setString(1, request);
+                ps.setString(2, "PENDING");
+                rs = ps.executeQuery();
+                sales = new LinkedHashSet<>();
+                while(rs.next()){
+                    int saleId = rs.getInt("saleid");
+                    String benId = rs.getString("benid");
+                    Date date = rs.getDate("orderdate");
+                    String transactionId = rs.getString("orderid");
+                    String currency = rs.getString("currency");
+                    String bankName = rs.getString("bankname");
+                    String accountNo = rs.getString("accountno");
+                    double receivingAmount = rs.getDouble("benamount");
+                    double exchangeRate = rs.getDouble("exchangerate");
+                    double sendingAmount = rs.getDouble("orderamount");
+                    String country = rs.getString("ordercountry");
+                    double totalAmount = rs.getDouble("totalamount");
+                    Sale sale = Sale.builder().bank_name(bankName).beneficiary_account_no(accountNo).beneficiary_country(country)
+                            .beneficiary_id(benId).currency(currency).exchange_rate(exchangeRate).order_date(date).order_id(transactionId)
+                            .originator_id(request).receiving_amount(receivingAmount).sale_id(saleId).sending_amount(sendingAmount)
+                            .total(totalAmount).build();
+                    sales.add(sale);
+                }
+            } catch (SQLException ex) {
+                LOG.error("getPendingTransactions - SQLException: "+ex.getMessage());
+            }finally {
+                closeRS(rs); closePS(ps); closeCon(con);
+            }
+        }        
+        return sales;
     }
 
 }
