@@ -42,5 +42,7 @@ public interface RPService {
     public String saveTransaction(@WebParam(name = "request") String request);
     @WebMethod(operationName = "getPendingTransaction")
     public String getPendingTransactions(@WebParam(name = "request") String request);
+    @WebMethod(operationName = "getAllTransaction")
+    public String getAllTransaction(@WebParam(name = "request") String request);
     
 }

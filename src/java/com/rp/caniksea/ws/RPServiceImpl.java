@@ -86,5 +86,10 @@ public class RPServiceImpl implements RPService{
     public String getPendingTransactions(String request) {
         return GSON.toJson(RP_ENGINE.getPendingTransactions(request));
     }
+
+    @Override
+    public String getAllTransaction(String request) {
+        return GSON.toJson(RP_ENGINE.getAllTransaction(request));
+    }
     
 }

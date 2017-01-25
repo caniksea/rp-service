@@ -362,4 +362,15 @@ public class RPEngine {
                 .response_data(sales).build();
     }
 
+    public GenericCollectionResponse getAllTransaction(String request) {
+        String response_code = "00", response_description = "Success";
+        Set<Object> sales = DAO.getAllTransactions(request);
+        if(sales == null){
+            response_code = "99";
+            response_description = "An error occurred!";
+        }
+        return GenericCollectionResponse.builder().response_code(response_code).response_description(response_description)
+                .response_data(sales).build();
+    }
+
 }
