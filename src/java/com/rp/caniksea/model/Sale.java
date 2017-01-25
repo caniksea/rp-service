@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class Sale implements Serializable {
 
-    private String originator_id, beneficiary_id, order_id, currency, bank_name, beneficiary_account_no, beneficiary_country;
+    private String originator_id, beneficiary_id, order_id, currency, bank_name, beneficiary_account_no, beneficiary_country, status;
     private double receiving_amount, exchange_rate, sending_amount, fee, total;
     private int sale_id;
     private Date order_date, process_date;
@@ -32,6 +32,7 @@ public class Sale implements Serializable {
         this.beneficiary_account_no = builder.beneficiary_account_no;
         this.beneficiary_country = builder.beneficiary_country;
         this.receiving_amount = builder.receiving_amount;
+        this.status = builder.status;
         this.exchange_rate = builder.exchange_rate;
         this.sending_amount = builder.sending_amount;
         this.fee = builder.fee;
@@ -39,6 +40,10 @@ public class Sale implements Serializable {
         this.sale_id = builder.sale_id;
         this.order_date = builder.order_date;
         this.process_date = builder.process_date;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public double getFee() {
@@ -103,7 +108,7 @@ public class Sale implements Serializable {
 
     public static class Builder {
 
-        private String originator_id, beneficiary_id, order_id, currency, bank_name, beneficiary_account_no, beneficiary_country;
+        private String originator_id, beneficiary_id, order_id, currency, bank_name, beneficiary_account_no, beneficiary_country, status;
         private double receiving_amount, exchange_rate, sending_amount, fee, total;
         private int sale_id;
         private Date order_date, process_date;
@@ -115,6 +120,11 @@ public class Sale implements Serializable {
 
         public Builder beneficiary_country(String beneficiary_country) {
             this.beneficiary_country = beneficiary_country;
+            return this;
+        }
+
+        public Builder status(String status) {
+            this.status = status;
             return this;
         }
 
@@ -191,6 +201,7 @@ public class Sale implements Serializable {
             this.bank_name = sale.bank_name;
             this.beneficiary_account_no = sale.beneficiary_account_no;
             this.beneficiary_country = sale.beneficiary_country;
+            this.status = sale.status;
             this.receiving_amount = sale.receiving_amount;
             this.exchange_rate = sale.exchange_rate;
             this.sending_amount = sale.sending_amount;
@@ -252,6 +263,7 @@ public class Sale implements Serializable {
                 ", bank_name=" + bank_name + 
                 ", beneficiary_account_no=" + beneficiary_account_no + 
                 ", beneficiary_country=" + beneficiary_country + 
+                ", status=" + status +
                 ", receiving_amount=" + receiving_amount + 
                 ", exchange_rate=" + exchange_rate + 
                 ", sending_amount=" + sending_amount + 

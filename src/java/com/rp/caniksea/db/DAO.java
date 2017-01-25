@@ -534,13 +534,54 @@ public class DAO {
         Set<Object> sales = null;
         Connection con = DBConnection.getMySQLConnection();
         if(con != null){
-            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? AND orderstatus = ? ORDER BY orderdate DESC LIMIT 9";
+            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? AND orderstatus = ? ORDER BY orderdate DESC";
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
                 ps = con.prepareStatement(selectSQL);
                 ps.setString(1, request);
                 ps.setString(2, "PENDING");
+                rs = ps.executeQuery();
+                sales = new LinkedHashSet<>();
+                while(rs.next()){
+                    int saleId = rs.getInt("saleid");
+                    String benId = rs.getString("benid");
+                    Date date = rs.getDate("orderdate");
+                    String transactionId = rs.getString("orderid");
+                    String currency = rs.getString("currency");
+                    String bankName = rs.getString("bankname");
+                    String accountNo = rs.getString("accountno");
+                    double receivingAmount = rs.getDouble("benamount");
+                    double exchangeRate = rs.getDouble("exchangerate");
+                    double sendingAmount = rs.getDouble("orderamount");
+                    String country = rs.getString("ordercountry");
+                    double totalAmount = rs.getDouble("totalamount");
+                    String status = rs.getString("orderstatus");
+                    Sale sale = Sale.builder().bank_name(bankName).beneficiary_account_no(accountNo).beneficiary_country(country)
+                            .beneficiary_id(benId).currency(currency).exchange_rate(exchangeRate).order_date(date).order_id(transactionId)
+                            .originator_id(request).receiving_amount(receivingAmount).sale_id(saleId).sending_amount(sendingAmount)
+                            .total(totalAmount).status(status).build();
+                    sales.add(sale);
+                }
+            } catch (SQLException ex) {
+                LOG.error("getPendingTransactions - SQLException: "+ex.getMessage());
+            }finally {
+                closeRS(rs); closePS(ps); closeCon(con);
+            }
+        }        
+        return sales;
+    }
+
+    public Set<Object> getAllTransactions(String request) {
+        Set<Object> sales = null;
+        Connection con = DBConnection.getMySQLConnection();
+        if(con != null){
+            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? ORDER BY orderdate DESC";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = con.prepareStatement(selectSQL);
+                ps.setString(1, request);
                 rs = ps.executeQuery();
                 sales = new LinkedHashSet<>();
                 while(rs.next()){
