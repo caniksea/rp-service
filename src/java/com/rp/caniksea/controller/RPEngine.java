@@ -353,7 +353,7 @@ public class RPEngine {
 
     public GenericCollectionResponse getPendingTransactions(String request) {
         String response_code = "00", response_description = "Success";
-        Set<Object> sales = DAO.getPendingTransactions(request);
+        Set<Object> sales = DAO.getTransactionsWithStatus(request, "PENDING");
         if(sales == null){
             response_code = "99";
             response_description = "An error occurred!";
@@ -371,6 +371,32 @@ public class RPEngine {
         }
         return GenericCollectionResponse.builder().response_code(response_code).response_description(response_description)
                 .response_data(sales).build();
+    }
+
+    public GenericCollectionResponse getSuccessfulTransactions(String request) {
+        String response_code = "00", response_description = "Success";
+        Set<Object> sales = DAO.getTransactionsWithStatus(request, "COMPLETED");
+        if(sales == null){
+            response_code = "99";
+            response_description = "An error occurred!";
+        }
+        return GenericCollectionResponse.builder().response_code(response_code).response_description(response_description)
+                .response_data(sales).build();
+    }
+
+    public Object getFailedTransactions(String request) {
+        String response_code = "00", response_description = "Success";
+        Set<Object> sales = DAO.getTransactionsWithStatus(request, "FAILED");
+        if(sales == null){
+            response_code = "99";
+            response_description = "An error occurred!";
+        }
+        return GenericCollectionResponse.builder().response_code(response_code).response_description(response_description)
+                .response_data(sales).build();
+    }
+
+    public Set<Bank> getBanks() {
+        return DAO.getBanks();
     }
 
 }

@@ -40,9 +40,15 @@ public interface RPService {
     public String getBank(@WebParam(name = "request") String request);
     @WebMethod(operationName = "saveTransaction")
     public String saveTransaction(@WebParam(name = "request") String request);
-    @WebMethod(operationName = "getPendingTransaction")
+    @WebMethod(operationName = "getPendingTransactions")
     public String getPendingTransactions(@WebParam(name = "request") String request);
-    @WebMethod(operationName = "getAllTransaction")
-    public String getAllTransaction(@WebParam(name = "request") String request);
+    @WebMethod(operationName = "getAllTransactions")
+    public String getAllTransactions(@WebParam(name = "request") String request);
+    @WebMethod(operationName = "getSuccessfulTransactions")
+    public String getSuccessfulTransactions(@WebParam(name = "request") String request);
+    @WebMethod(operationName = "getFailedTransactions")
+    public String getFailedTransactions(@WebParam(name = "request") String request);
+    @WebMethod(operationName = "getBanks")
+    public String getBanks();
     
 }
