@@ -88,8 +88,23 @@ public class RPServiceImpl implements RPService{
     }
 
     @Override
-    public String getAllTransaction(String request) {
+    public String getAllTransactions(String request) {
         return GSON.toJson(RP_ENGINE.getAllTransaction(request));
+    }
+
+    @Override
+    public String getSuccessfulTransactions(String request) {
+        return GSON.toJson(RP_ENGINE.getSuccessfulTransactions(request));
+    }
+
+    @Override
+    public String getFailedTransactions(String request) {
+        return GSON.toJson(RP_ENGINE.getFailedTransactions(request));
+    }
+
+    @Override
+    public String getBanks() {
+        return GSON.toJson(RP_ENGINE.getBanks());
     }
     
 }

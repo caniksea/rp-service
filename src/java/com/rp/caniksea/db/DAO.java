@@ -195,59 +195,6 @@ public class DAO {
         return paymentMethod;
     }
 
-//    public TransactionPayload initiateSendMoney(TransactionPayload transactionPayload) {
-//        Connection con = DBConnection.getMySQLConnection();
-//        TransactionPayload tp = null;
-//        if(con != null){
-//            String insertSQL = "INSERT INTO rp_transaction (id, destination, rp_pay_method_id, source_amount, destination_amount, fee, total) "
-//                    + "VALUES (?,?,?,?,?,?,?)";
-//            PreparedStatement ps = null;
-////            ResultSet rs = null;
-//            try {
-//                ps = con.prepareStatement(insertSQL);
-//                ps.setString(1, transactionPayload.getRp_transaction_id());
-//                ps.setString(2, transactionPayload.getDestination_country_iso_code());
-//                ps.setInt(3, transactionPayload.getPay_method());
-//                ps.setDouble(4, transactionPayload.getSource_amount());
-//                ps.setDouble(5, transactionPayload.getDestination_amount());
-//                ps.setDouble(6, transactionPayload.getFee());
-//                ps.setDouble(7, transactionPayload.getTotal());
-//                ps.executeUpdate();
-//                tp = transactionPayload;
-//            } catch (SQLException ex) {
-//                LOG.error("initiateSendMoney - SQLException: " + ex.getMessage());
-////                java.util.logging.Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-//            } finally {
-//                closePS(ps); closeCon(con);
-//            }
-//        }
-//        return tp;
-//    }
-
-//    public Set<RPTransactionEvent> createTransactionEvent(RPTransactionEvent event) {
-//        Connection con = DBConnection.getMySQLConnection();
-//        Set<RPTransactionEvent> events = new HashSet<>();
-//        if(con != null){
-//            String insertSQL = "INNSERT INTO rp_transaction_event (rp_transaction_id, status, description, rp_user_id) VALUES (?,?,?,?)";
-//            PreparedStatement ps = null;
-//            try {
-//                ps = con.prepareStatement(insertSQL);
-//                ps.setString(1, event.getRp_transaction_id());
-//                ps.setString(2, event.getStatus());
-//                ps.setString(3, event.getDescription());
-//                ps.setString(4, event.getRp_transaction_id());
-//                ps.executeUpdate();
-//                events.add(event);
-//            } catch (SQLException ex) {
-//                LOG.error("createTransactionEvent - SQLException: "+ex.getMessage());
-////                java.util.logging.Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
-//            } finally {
-//                closePS(ps); closeCon(con);
-//            }
-//        }
-//        return events;
-//    }
-
     public User getUser(String l_customer_email) {
         Connection con = DBConnection.getMySQLConnection();
         User user = null;
@@ -530,48 +477,6 @@ public class DAO {
         return s;
     }
 
-    public Set<Object> getPendingTransactions(String request) {
-        Set<Object> sales = null;
-        Connection con = DBConnection.getMySQLConnection();
-        if(con != null){
-            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? AND orderstatus = ? ORDER BY orderdate DESC";
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            try {
-                ps = con.prepareStatement(selectSQL);
-                ps.setString(1, request);
-                ps.setString(2, "PENDING");
-                rs = ps.executeQuery();
-                sales = new LinkedHashSet<>();
-                while(rs.next()){
-                    int saleId = rs.getInt("saleid");
-                    String benId = rs.getString("benid");
-                    Date date = rs.getDate("orderdate");
-                    String transactionId = rs.getString("orderid");
-                    String currency = rs.getString("currency");
-                    String bankName = rs.getString("bankname");
-                    String accountNo = rs.getString("accountno");
-                    double receivingAmount = rs.getDouble("benamount");
-                    double exchangeRate = rs.getDouble("exchangerate");
-                    double sendingAmount = rs.getDouble("orderamount");
-                    String country = rs.getString("ordercountry");
-                    double totalAmount = rs.getDouble("totalamount");
-                    String status = rs.getString("orderstatus");
-                    Sale sale = Sale.builder().bank_name(bankName).beneficiary_account_no(accountNo).beneficiary_country(country)
-                            .beneficiary_id(benId).currency(currency).exchange_rate(exchangeRate).order_date(date).order_id(transactionId)
-                            .originator_id(request).receiving_amount(receivingAmount).sale_id(saleId).sending_amount(sendingAmount)
-                            .total(totalAmount).status(status).build();
-                    sales.add(sale);
-                }
-            } catch (SQLException ex) {
-                LOG.error("getPendingTransactions - SQLException: "+ex.getMessage());
-            }finally {
-                closeRS(rs); closePS(ps); closeCon(con);
-            }
-        }        
-        return sales;
-    }
-
     public Set<Object> getAllTransactions(String request) {
         Set<Object> sales = null;
         Connection con = DBConnection.getMySQLConnection();
@@ -610,6 +515,80 @@ public class DAO {
             }
         }        
         return sales;
+    }
+
+    public Set<Object> getTransactionsWithStatus(String request, String type) {
+        Set<Object> sales = null;
+        Connection con = DBConnection.getMySQLConnection();
+        if(con != null){
+            String selectSQL = "SELECT * FROM sales_master WHERE contactid = ? AND orderstatus = ? ORDER BY orderdate DESC";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = con.prepareStatement(selectSQL);
+                ps.setString(1, request);
+                ps.setString(2, type);
+                rs = ps.executeQuery();
+                sales = new LinkedHashSet<>();
+                while(rs.next()){
+                    int saleId = rs.getInt("saleid");
+                    String benId = rs.getString("benid");
+                    Date date = rs.getDate("orderdate");
+                    String transactionId = rs.getString("orderid");
+                    String currency = rs.getString("currency");
+                    String bankName = rs.getString("bankname");
+                    String accountNo = rs.getString("accountno");
+                    double receivingAmount = rs.getDouble("benamount");
+                    double exchangeRate = rs.getDouble("exchangerate");
+                    double sendingAmount = rs.getDouble("orderamount");
+                    String country = rs.getString("ordercountry");
+                    double totalAmount = rs.getDouble("totalamount");
+                    String status = rs.getString("orderstatus");
+                    Sale sale = Sale.builder().bank_name(bankName).beneficiary_account_no(accountNo).beneficiary_country(country)
+                            .beneficiary_id(benId).currency(currency).exchange_rate(exchangeRate).order_date(date).order_id(transactionId)
+                            .originator_id(request).receiving_amount(receivingAmount).sale_id(saleId).sending_amount(sendingAmount)
+                            .total(totalAmount).status(status).build();
+                    sales.add(sale);
+                }
+            } catch (SQLException ex) {
+                LOG.error("getPendingTransactions - SQLException: "+ex.getMessage());
+            }finally {
+                closeRS(rs); closePS(ps); closeCon(con);
+            }
+        }        
+        return sales;
+    }
+
+    public Set<Bank> getBanks() {
+        Set<Bank> banks = new HashSet<>();
+        Connection con = DBConnection.getMySQLConnection();
+        if (con != null) {
+            String selectSQL = "SELECT * FROM bank_master";
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = con.prepareStatement(selectSQL);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt("bankid");
+                    String bankName = rs.getString("bankname");
+                    String countryCode = rs.getString("country_iso_code");
+                    String bankCode = rs.getString("bank_code");
+                    String bankAlias = rs.getString("bank_alias_name");
+                    Bank bank = Bank.builder().bank_alias(bankAlias).bank_code(bankCode).bank_id(id).bank_name(bankName).country_code(countryCode)
+                            .build();
+                    banks.add(bank);
+                }
+            } catch (SQLException ex) {
+                LOG.error("getCountries - SQLException: " + ex.getMessage());
+//                java.util.logging.Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                closePS(ps);
+                closeRS(rs);
+                closeCon(con);
+            }
+        }
+        return banks;
     }
 
 }
