@@ -50,5 +50,7 @@ public interface RPService {
     public String getFailedTransactions(@WebParam(name = "request") String request);
     @WebMethod(operationName = "getBanks")
     public String getBanks();
+    @WebMethod(operationName = "deleteBeneficiary")
+    public String deleteBeneficiary(@WebParam(name = "request") String request);
     
 }

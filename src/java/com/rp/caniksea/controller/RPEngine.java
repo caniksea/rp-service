@@ -330,23 +330,22 @@ public class RPEngine {
                 : object.get("fee").getAsString();
         String total = (object.get("total") == null || object.get("total").getAsString() == null) ? ""
                 : object.get("total").getAsString();
-        
+
         double beneficiary_amount = Double.parseDouble(receiving_amount);
         double exchangeRate = Double.parseDouble(exchange_rate);
         double sendingAmount = Double.parseDouble(sending_amount);
         double feeDbl = Double.parseDouble(fee);
         double totalDbl = Double.parseDouble(total);
-        
+
         sale = Sale.builder().bank_name(bank_name).beneficiary_account_no(beneficiary_account_no).beneficiary_country(beneficiary_country)
                 .beneficiary_id(beneficiary_id).currency(currency).exchange_rate(exchangeRate).fee(feeDbl).order_id(order_id).originator_id(originator_id)
                 .receiving_amount(beneficiary_amount).sending_amount(sendingAmount).total(totalDbl).build();
-        
+
         sale = DAO.saveTransaction(sale);
-        if(sale == null){
+        if (sale == null) {
             response_code = "99";
             response_description = "Sale not saved.";
         }
-        
 
         return PostGenericResponse.builder().response_code(response_code).response_description(response_description).data(sale).build();
     }
@@ -354,7 +353,7 @@ public class RPEngine {
     public GenericCollectionResponse getPendingTransactions(String request) {
         String response_code = "00", response_description = "Success";
         Set<Object> sales = DAO.getTransactionsWithStatus(request, "PENDING");
-        if(sales == null){
+        if (sales == null) {
             response_code = "99";
             response_description = "An error occurred!";
         }
@@ -365,7 +364,7 @@ public class RPEngine {
     public GenericCollectionResponse getAllTransaction(String request) {
         String response_code = "00", response_description = "Success";
         Set<Object> sales = DAO.getAllTransactions(request);
-        if(sales == null){
+        if (sales == null) {
             response_code = "99";
             response_description = "An error occurred!";
         }
@@ -376,7 +375,7 @@ public class RPEngine {
     public GenericCollectionResponse getSuccessfulTransactions(String request) {
         String response_code = "00", response_description = "Success";
         Set<Object> sales = DAO.getTransactionsWithStatus(request, "COMPLETED");
-        if(sales == null){
+        if (sales == null) {
             response_code = "99";
             response_description = "An error occurred!";
         }
@@ -387,7 +386,7 @@ public class RPEngine {
     public Object getFailedTransactions(String request) {
         String response_code = "00", response_description = "Success";
         Set<Object> sales = DAO.getTransactionsWithStatus(request, "FAILED");
-        if(sales == null){
+        if (sales == null) {
             response_code = "99";
             response_description = "An error occurred!";
         }
@@ -397,6 +396,22 @@ public class RPEngine {
 
     public Set<Bank> getBanks() {
         return DAO.getBanks();
+    }
+
+    public PostGenericResponse deleteBeneficiary(String request) {
+        String response_code = "00", response_description = "Success";
+        try {
+            int benId = Integer.parseInt(request);
+            boolean deleted = DAO.deleteBeneficiary(benId);
+            if(!deleted){
+                response_code = "99"; response_description = "Beneficiary Not Deleted";
+            }
+        } catch (NumberFormatException nfe) {
+            LOG.error("Error in request parameter: "+nfe.getMessage());
+            response_code = "07";
+            response_description = "Invalid Parameter";
+        }
+        return PostGenericResponse.builder().response_code(response_code).response_description(response_description).build();
     }
 
 }

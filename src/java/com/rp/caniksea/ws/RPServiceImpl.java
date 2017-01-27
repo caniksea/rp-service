@@ -106,5 +106,10 @@ public class RPServiceImpl implements RPService{
     public String getBanks() {
         return GSON.toJson(RP_ENGINE.getBanks());
     }
+
+    @Override
+    public String deleteBeneficiary(String request) {
+        return GSON.toJson(RP_ENGINE.deleteBeneficiary(request));
+    }
     
 }
