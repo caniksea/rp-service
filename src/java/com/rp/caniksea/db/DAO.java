@@ -591,4 +591,24 @@ public class DAO {
         return banks;
     }
 
+    public boolean deleteBeneficiary(int benId) {
+        boolean deleted = false;
+        Connection con = DBConnection.getMySQLConnection();
+        if(con != null){
+            String deleteSQL = "DELETE FROM ben_master WHERE benid = ?";
+            PreparedStatement ps = null;
+            try {
+                ps = con.prepareStatement(deleteSQL);
+                ps.setInt(1, benId);
+                ps.execute();
+                deleted = true;
+            } catch (SQLException ex) {
+                LOG.error("deleteBeneficiary - SQLException: "+ ex.getMessage());
+            } finally {
+                closePS(ps); closeCon(con);
+            }
+        }
+        return deleted;
+    }
+
 }
