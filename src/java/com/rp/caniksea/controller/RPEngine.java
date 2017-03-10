@@ -5,6 +5,7 @@
  */
 package com.rp.caniksea.controller;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rp.caniksea.db.DAO;
@@ -33,6 +34,7 @@ public class RPEngine {
     private final DAO DAO = new DAO();
     private final DecimalFormat DF = new DecimalFormat("#0.00");
     private static final Logger LOG = Logger.getLogger(RPEngine.class);
+    private final Gson GSON = new Gson();
 
     public Set<Country> getCountries() {
         return DAO.getCountries();
@@ -403,15 +405,51 @@ public class RPEngine {
         try {
             int benId = Integer.parseInt(request);
             boolean deleted = DAO.deleteBeneficiary(benId);
-            if(!deleted){
-                response_code = "99"; response_description = "Beneficiary Not Deleted";
+            if (!deleted) {
+                response_code = "99";
+                response_description = "Beneficiary Not Deleted";
             }
         } catch (NumberFormatException nfe) {
-            LOG.error("Error in request parameter: "+nfe.getMessage());
+            LOG.error("Error in request parameter: " + nfe.getMessage());
             response_code = "07";
             response_description = "Invalid Parameter";
         }
         return PostGenericResponse.builder().response_code(response_code).response_description(response_description).build();
+    }
+
+    public PostGenericResponse updateUser(String request) {
+        String response_code = "00", response_description = "Success";
+        User updatedUser = null;
+        User tempUser = GSON.fromJson(request, User.class);
+        String firstName = tempUser.getFirst_name() == null ? "" : tempUser.getFirst_name();
+        String lastName = tempUser.getLast_name() == null ? "" : tempUser.getLast_name();
+        if (firstName.isEmpty() || lastName.isEmpty()) {
+            response_code = "01";
+            response_description = "Missing Parameter";
+        } else {
+            String phone = tempUser.getPhone() == null ? "" : tempUser.getPhone();
+            String fax = tempUser.getFax() == null ? "" : tempUser.getFax();
+            String mobile = tempUser.getMobile() == null ? "" : tempUser.getMobile();
+            String address = tempUser.getAddress() == null ? "" : tempUser.getAddress();
+            String city = tempUser.getCity() == null ? "" : tempUser.getCity();
+            String postal_code = tempUser.getPostal_code() == null ? "" : tempUser.getPostal_code();
+            String country = tempUser.getCountry() == null ? "" : tempUser.getCountry();
+            String dob = tempUser.getDob() == null ? "" : tempUser.getDob();
+
+            tempUser = User.builder().copy(tempUser).phone(phone).fax(fax).mobile(mobile)
+                    .address(address).city(city).postal_code(postal_code).country(country)
+                    .dob(dob).build();
+
+            updatedUser = DAO.updateUser(tempUser);
+
+            if (updatedUser == null) {
+                response_code = "99";
+                response_description = "An error occurred!";
+            }
+
+        }
+        return PostGenericResponse.builder().response_code(response_code).response_description(response_description)
+                .data(updatedUser).build();
     }
 
 }
