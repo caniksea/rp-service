@@ -111,5 +111,10 @@ public class RPServiceImpl implements RPService{
     public String deleteBeneficiary(String request) {
         return GSON.toJson(RP_ENGINE.deleteBeneficiary(request));
     }
+
+    @Override
+    public String UpdateUser(String request) {
+        return GSON.toJson(RP_ENGINE.updateUser(request));
+    }
     
 }

@@ -14,7 +14,9 @@ import java.util.Objects;
  */
 public class User implements Serializable, Comparable<User> {
 
-    private String user_id, email, password, first_name, last_name, phone, status, is_onlinecustomer, activation_key, fe_update_acc;
+    private String user_id, email, password, first_name, last_name, phone, status,
+            is_onlinecustomer, activation_key, fe_update_acc, dob, address, city,
+            country, postal_code, fax, mobile;
     private int contact_id;
 
     private User() {
@@ -32,6 +34,37 @@ public class User implements Serializable, Comparable<User> {
         this.is_onlinecustomer = builder.is_onlinecustomer;
         this.activation_key = builder.activation_key;
         this.fe_update_acc = builder.fe_update_acc;
+        this.dob = builder.dob;
+        this.address = builder.address;
+        this.city = builder.city;
+        this.country = builder.country;
+        this.postal_code = builder.postal_code;
+        this.fax = builder.fax;
+        this.mobile = builder.mobile;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getPostal_code() {
+        return postal_code;
+    }
+
+    public String getFax() {
+        return fax;
+    }
+
+    public String getMobile() {
+        return mobile;
     }
 
     public String getUser_id() {
@@ -78,12 +111,18 @@ public class User implements Serializable, Comparable<User> {
         return phone;
     }
 
+    public String getDob() {
+        return dob;
+    }
+
     public static class Builder {
 
-        private String user_id, email, password, first_name, last_name, phone, status, is_onlinecustomer, activation_key, fe_update_acc;
+        private String user_id, email, password, first_name, last_name, phone, status,
+                is_onlinecustomer, activation_key, fe_update_acc, dob, address, city,
+                country, postal_code, fax, mobile;
         private int contact_id;
-        
-        public Builder contact_id(int contact_id){
+
+        public Builder contact_id(int contact_id) {
             this.contact_id = contact_id;
             return this;
         }
@@ -138,6 +177,41 @@ public class User implements Serializable, Comparable<User> {
             return this;
         }
 
+        public Builder dob(String dob) {
+            this.dob = dob;
+            return this;
+        }
+
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Builder city(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder country(String country) {
+            this.country = country;
+            return this;
+        }
+
+        public Builder postal_code(String postal_code) {
+            this.postal_code = postal_code;
+            return this;
+        }
+
+        public Builder fax(String fax) {
+            this.fax = fax;
+            return this;
+        }
+
+        public Builder mobile(String mobile) {
+            this.mobile = mobile;
+            return this;
+        }
+
         public Builder copy(User user) {
             this.contact_id = user.contact_id;
             this.user_id = user.user_id;
@@ -150,6 +224,13 @@ public class User implements Serializable, Comparable<User> {
             this.is_onlinecustomer = user.is_onlinecustomer;
             this.activation_key = user.activation_key;
             this.fe_update_acc = user.fe_update_acc;
+            this.dob = user.dob;
+            this.address = user.address;
+            this.city = user.city;
+            this.country = user.country;
+            this.postal_code = user.postal_code;
+            this.fax = user.fax;
+            this.mobile = user.mobile;
 
             return this;
         }
@@ -172,8 +253,8 @@ public class User implements Serializable, Comparable<User> {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.user_id);
-        hash = 43 * hash + this.contact_id;
+        hash = 23 * hash + Objects.hashCode(this.user_id);
+        hash = 23 * hash + this.contact_id;
         return hash;
     }
 
@@ -197,7 +278,7 @@ public class User implements Serializable, Comparable<User> {
 
     @Override
     public String toString() {
-        return "User{" + "user_id=" + user_id + ", email=" + email + ", password=" + password + ", first_name=" + first_name + ", last_name=" + last_name + ", phone=" + phone + ", status=" + status + ", is_onlinecustomer=" + is_onlinecustomer + ", activation_key=" + activation_key + ", fe_update_acc=" + fe_update_acc + ", contact_id=" + contact_id + '}';
+        return "User{" + "user_id=" + user_id + ", email=" + email + ", password=" + password + ", first_name=" + first_name + ", last_name=" + last_name + ", phone=" + phone + ", status=" + status + ", is_onlinecustomer=" + is_onlinecustomer + ", activation_key=" + activation_key + ", fe_update_acc=" + fe_update_acc + ", dob=" + dob + ", address=" + address + ", city=" + city + ", country=" + country + ", postal_code=" + postal_code + ", fax=" + fax + ", mobile=" + mobile + ", contact_id=" + contact_id + '}';
     }
 
 }

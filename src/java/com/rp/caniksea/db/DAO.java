@@ -214,13 +214,21 @@ public class DAO {
                     String lastName = rs.getString("surname");
                     String phone = rs.getString("phone");
                     int contactId = rs.getInt("contactid");
+                    String fax = rs.getString("fax");
+                    String mobile = rs.getString("mobile");
+                    String address = rs.getString("address");
+                    String city = rs.getString("city");
+                    String postalCode = rs.getString("postcode");
+                    String country = rs.getString("country");
+                    String dob = rs.getString("dob");
                     user = User.builder()
                             .email(email)
                             .first_name(firstName)
                             .user_id(userId)
                             .last_name(lastName)
                             .password(password)
-                            .phone(phone).contact_id(contactId).build();
+                            .phone(phone).contact_id(contactId).fax(fax).mobile(mobile).address(address)
+                            .city(city).postal_code(postalCode).country(country).dob(dob).build();
                 }
             } catch (SQLException ex) {
                 LOG.error("getUser - SQLException: "+ex.getMessage());
@@ -502,10 +510,11 @@ public class DAO {
                     double sendingAmount = rs.getDouble("orderamount");
                     String country = rs.getString("ordercountry");
                     double totalAmount = rs.getDouble("totalamount");
+                    String status = rs.getString("orderstatus");
                     Sale sale = Sale.builder().bank_name(bankName).beneficiary_account_no(accountNo).beneficiary_country(country)
                             .beneficiary_id(benId).currency(currency).exchange_rate(exchangeRate).order_date(date).order_id(transactionId)
                             .originator_id(request).receiving_amount(receivingAmount).sale_id(saleId).sending_amount(sendingAmount)
-                            .total(totalAmount).build();
+                            .total(totalAmount).status(status).build();
                     sales.add(sale);
                 }
             } catch (SQLException ex) {
@@ -609,6 +618,37 @@ public class DAO {
             }
         }
         return deleted;
+    }
+
+    public User updateUser(User tempUser) {
+        User user = null;
+        Connection con = DBConnection.getMySQLConnection();
+        if(con != null){
+            String updateSQL = "UPDATE contact_master SET firstname = ?, surname = ?, phone = ?, fax = ?, "
+                    + "mobile = ?, address = ?, city = ?, postcode = ?, country = ?, dob = ? WHERE contactid = ?";
+            PreparedStatement ps = null;
+            try { 
+                ps = con.prepareStatement(updateSQL);
+                ps.setString(1, tempUser.getFirst_name());
+                ps.setString(2, tempUser.getLast_name());
+                ps.setString(3, tempUser.getPhone());
+                ps.setString(4, tempUser.getFax());
+                ps.setString(5, tempUser.getMobile());
+                ps.setString(6, tempUser.getAddress());
+                ps.setString(7, tempUser.getCity());
+                ps.setString(8, tempUser.getPostal_code());
+                ps.setString(9, tempUser.getCountry());
+                ps.setString(10, tempUser.getDob());
+                ps.setInt(11, tempUser.getContact_id());
+                ps.executeUpdate();
+                user = tempUser;
+            } catch (SQLException ex) {
+                LOG.error("updateUser - SQLException: "+ ex.getMessage());
+            } finally {
+                closePS(ps); closeCon(con);
+            }
+        }
+        return user;
     }
 
 }
